@@ -11,17 +11,17 @@ import processing.serial.*;
 
 
 Serial ser;
-Message lastMessage;
-int lastMessageCount;
+Message lastMessage; //para guardar ultimo mensaje del inbox
+int lastMessageCount; // ultimo conteo de los mensajes
 boolean firstCheck = true;
 String[] command;
 
-String email = "usuario@gmail.com";
+String email = "estadosmanipulados@gmail.com";
 String smtp_host = "smtp.gmail.com";
 String imap_host = "imap.gmail.com";
-String pass = "password";
+String pass = "estadosmanipulados1699";
 
-long past;
+long past; //long se utiliza para numero muy largos 1 h 3.600.000 milisegundos
 long interval = 10000;
 void setup() {
   size(200,200);
@@ -45,9 +45,9 @@ void checkMail() {
   try {
     
     Properties props = new Properties();
-
+    //puerto por el que requerimos los mensajes por el protocolo IMAP
     
-    props.put("mail.imap.port", "993");
+    props.put("mail.imap.port", "993"); //cada servidor de correo es diferente
     
     //seguridad
     /*
@@ -64,13 +64,15 @@ void checkMail() {
     
     // Obtiene el Inbox
     Folder folder = store.getFolder("INBOX");
-    folder.open(Folder.READ_ONLY);
-    System.out.println(folder.getMessageCount() + " total messages.");
+    folder.open(Folder.READ_ONLY); //lee los mensajes pero no borra ni cambia
+    System.out.println(folder.getMessageCount() + " total messages."); //devuelve un entero
 
     if(lastMessageCount < folder.getMessageCount()){
       if(firstCheck){
         println("first check");
+        //la actualizacion de la variable de conteo de mensajes
         lastMessageCount = folder.getMessageCount();
+        //obtnemos el ultimo mensaje del inbox
         lastMessage = folder.getMessages()[folder.getMessageCount() - 1];
         firstCheck = false;
         
@@ -84,10 +86,13 @@ void checkMail() {
         println("--------- BEGIN MESSAGE------------");
         println("From: " + lastMessage.getFrom()[0]);
         println("Subject: " + lastMessage.getSubject());
-        command = parseCommand(lastMessage.getSubject());
+        command = parseCommand(lastMessage.getSubject()); 
+        //parsea el comando que viene el el subject 
         executeCommand(command);
+        //ejecuta el comando
         println("Message:");
         String content = lastMessage.getContent().toString(); 
+        //obtener el ultimo mensaje y convertirlo en un string
         println(content);
         println("--------- END MESSAGE------------");
 
@@ -183,7 +188,7 @@ void executeCommand(String[] command){
   println("name " + name);
   println("param " + parameter);
   
-  if(name.equals("led1")){
+  if(name.equals("led")){
     if(parameter.equals("on")){
       ser.write('A');
     }else if(parameter.equals("off")){
